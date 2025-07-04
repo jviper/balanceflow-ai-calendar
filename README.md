@@ -26,7 +26,7 @@ BalanceFlow is an AI-powered calendar application designed to help you schedule 
 ## 📦 Installation
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/your-username/balanceflow-ai-calendar.git
+    git clone https://github.com/jviper/balanceflow-ai-calendar.git
     cd balanceflow-ai-calendar
     ```
 2.  Install dependencies:
