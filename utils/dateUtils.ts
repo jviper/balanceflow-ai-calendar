@@ -1,0 +1,87 @@
+import {
+    addDays,
+    addHours,
+    addMinutes,
+    areIntervalsOverlapping,
+    eachDayOfInterval,
+    eachWeekOfInterval,
+    endOfMonth,
+    endOfWeek,
+    format,
+    isAfter,
+    isBefore,
+    isSameDay
+} from 'date-fns';
+import startOfDay from 'date-fns/startOfDay';
+import startOfMonth from 'date-fns/startOfMonth';
+import startOfWeek from 'date-fns/startOfWeek';
+import type { Task } from '../types';
+
+export const getWeekDays = (date: Date) => {
+    return eachDayOfInterval({
+        start: startOfWeek(date, { weekStartsOn: 1 }),
+        end: endOfWeek(date, { weekStartsOn: 1 }),
+    });
+};
+
+export const getMonthWeeks = (date: Date) => {
+    const weeks = eachWeekOfInterval(
+        {
+            start: startOfMonth(date),
+            end: endOfMonth(date),
+        },
+        { weekStartsOn: 1 }
+    );
+    return weeks.map(weekStart => getWeekDays(weekStart));
+};
+
+export const getDayHours = () => {
+    return Array.from({ length: 24 }, (_, i) => i);
+};
+
+export const formatDate = (date: Date, formatStr: string) => {
+    return format(date, formatStr);
+};
+
+export const getTaskEndTime = (task: Task): Date => {
+    if (!task.startTime) return new Date();
+    return addMinutes(new Date(task.startTime), task.duration);
+};
+
+export const isToday = (date: Date) => {
+    return isSameDay(date, new Date());
+};
+
+export const timeToTop = (date: Date): number => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return ((hours * 60 + minutes) / (24 * 60)) * 100;
+};
+
+export const durationToHeight = (duration: number): number => {
+    return (duration / (24 * 60)) * 100;
+};
+
+export const checkRecurrence = (task: Task, date: Date): boolean => {
+    if (!task.startTime) return false;
+    const taskStartDate = startOfDay(new Date(task.startTime));
+    const checkDate = startOfDay(date);
+
+    if (isAfter(taskStartDate, checkDate)) return false;
+
+    switch (task.recurrence) {
+        case 'daily':
+            return true;
+        case 'weekly':
+            return taskStartDate.getDay() === checkDate.getDay();
+        case 'monthly':
+            return taskStartDate.getDate() === checkDate.getDate();
+        case 'yearly':
+            return taskStartDate.getDate() === checkDate.getDate() && taskStartDate.getMonth() === checkDate.getMonth();
+        default:
+            return false;
+    }
+};
+
+
+export { addMinutes, isSameDay, isBefore, addDays, startOfDay, addHours, areIntervalsOverlapping, format, startOfWeek, endOfWeek, startOfMonth, endOfMonth };
